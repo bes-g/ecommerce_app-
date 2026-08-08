@@ -1,21 +1,23 @@
-# 🛒 Flutter E-Commerce App
+# 🛒 Flutter E-Commerce App — Backend
 
-A full-stack e-commerce mobile application built with **Flutter** and a custom **Node.js + PostgreSQL** backend. The app features live product browsing via the [Fake Store API](https://fakestoreapi.com), a persistent shopping cart, and a secure authentication system with real user accounts stored in a PostgreSQL database.
+This is the **backend service** for a full-stack e-commerce mobile application. Built with **Node.js, Express, and PostgreSQL**, it handles secure user authentication for the companion **Flutter** frontend app, which pulls live product data from the [Fake Store API](https://fakestoreapi.com).
+
+> 📱 Looking for the Flutter frontend? See the [frontend README](../ecommerce_app/README.md).
 
 ## ✨ Features
 
 - **Authentication** — Sign up and log in with real, persisted accounts (JWT-based sessions, bcrypt password hashing)
-- **Product Catalog** — Live search, category filters, and pull-to-refresh product browsing
-- **Product Details** — Full product specs, pricing, and ratings
-- **Shopping Cart** — Add/remove items, adjust quantities, live total calculation, and local persistence
+- **Product Catalog** — Live search, category filters, and pull-to-refresh product browsing *(handled on the frontend via Fake Store API)*
+- **Product Details** — Full product specs, pricing, and ratings *(frontend)*
+- **Shopping Cart** — Add/remove items, adjust quantities, live total calculation, and local persistence *(frontend)*
 - **Profile** — View account details and manage session/logout
 
 ## 🏗️ Architecture
 
-Built using **Feature-First Clean Architecture**, separating concerns into isolated, testable modules:
+This backend is part of a **full-stack Flutter e-commerce app**, structured with **Feature-First Clean Architecture** on the frontend and a lightweight Express REST API on the backend:
 
 ```
-lib/
+lib/                       (Flutter frontend — separate repo/folder)
  ├── core/
  │    ├── network/     # Dio HTTP client + interceptors
  │    ├── storage/     # Local session & cart persistence
@@ -25,17 +27,17 @@ lib/
       ├── products/    # Catalog, search, filters, product details
       ├── cart/        # Cart state, quantity logic, totals
       └── profile/     # User profile & account info
+
+ecommerce_backend/         (this repo — Node.js backend)
+ ├── db.js             # PostgreSQL connection pool
+ ├── index.js          # Express server entry point
+ └── routes/
+      └── auth.js      # Signup & login endpoints
 ```
 
 ## 🧰 Tech Stack
 
-**Frontend (Flutter)**
-- `flutter_riverpod` — state management (Notifier / StateNotifier pattern)
-- `dio` — networking with custom interceptors for JWT injection & error handling
-- `shared_preferences` — local persistence for cart and login session
-- `cached_network_image` — image caching with shimmer loading placeholders
-
-**Backend (Node.js)**
+**Backend (this repo — Node.js)**
 - `express` — REST API server
 - `pg` — PostgreSQL client
 - `bcrypt` — secure password hashing
@@ -45,27 +47,34 @@ lib/
 **Database**
 - PostgreSQL — stores user accounts securely
 
+**Frontend (Flutter — separate repo/folder)**
+- `flutter_riverpod` — state management (Notifier / StateNotifier pattern)
+- `dio` — networking with custom interceptors for JWT injection & error handling
+- `shared_preferences` — local persistence for cart and login session
+- `cached_network_image` — image caching with shimmer loading placeholders
+
 ## 🔌 API Overview
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/auth/signup` | Create a new user account |
-| `POST` | `/auth/login` | Authenticate and receive a JWT |
-| `GET` | `/products` | Fetch all products (Fake Store API) |
-| `GET` | `/products/categories` | Fetch product categories |
-| `GET` | `/products/category/:category` | Fetch products by category |
-| `GET` | `/users/1` | Fetch profile info |
+| Method | Endpoint | Description | Served by |
+|---|---|---|---|
+| `POST` | `/auth/signup` | Create a new user account | This backend |
+| `POST` | `/auth/login` | Authenticate and receive a JWT | This backend |
+| `GET` | `/products` | Fetch all products | Fake Store API |
+| `GET` | `/products/categories` | Fetch product categories | Fake Store API |
+| `GET` | `/products/category/:category` | Fetch products by category | Fake Store API |
+| `GET` | `/users/1` | Fetch profile info | Fake Store API |
 
 ## 🚀 Getting Started
 
-**Backend**
+**Run this backend**
 ```bash
 cd ecommerce_backend
 npm install
 node index.js
 ```
+Server runs at `http://localhost:3000` by default.
 
-**Frontend**
+**Run the companion Flutter frontend**
 ```bash
 cd ecommerce_app
 flutter pub get
